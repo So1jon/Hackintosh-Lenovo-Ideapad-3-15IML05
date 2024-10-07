@@ -2,13 +2,15 @@
 <p align="center"><img src="https://i.imgur.com/HJnpvwQ.png" width="200" height="48"/> EFI</p>
 <p align="center">
   <a href="https://github.com/acidanthera/OpenCorePkg">
-  <img src="https://img.shields.io/badge/OpenCore-0.9.9-informational.svg">
+  <img src="https://img.shields.io/badge/OpenCore-1.0.1-informational.svg">
  </a>
 </p>
 
 <a href="https://github.com/So1jon">
     <img src="https://img.shields.io/github/followers/So1jon?label=So1jon&logo=GitHub&style=social" />
 </a> 
+
+[![GitHub all releases](https://img.shields.io/github/downloads/So1jon/Hackintosh-Lenovo-Ideapad-3-15IML05/total?style=flat&logo=github&logoColor=white&color=1A91FF)](https://github.com/So1jon/Hackintosh-Lenovo-Ideapad-3-15IML05/releases)
 
 
 ### Hardware specifications:
