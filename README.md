@@ -29,6 +29,17 @@
 | Webcam       | `Integrated Camera  `                       | Working     | 
 | Battery      | `46270 mWh `                                | Working     | 
 
+
+### Geekbench:
+
+| Information           | Result | ID Information                                                 | Operating system  | Model ID        |
+| --------------------- | ------ | -------------------------------------------------------------- | ----------------- | --------------- |
+| CPU Single-Core Score | 1034   | [ID 8181935](https://browser.geekbench.com/v6/cpu/8181935)     | `macOS Sonoma`    | `MacBookAir8,1` |
+| CPU Multi-Core Score  | 2063   | [ID 8181935](https://browser.geekbench.com/v6/cpu/8181935)     | `macOS Sonoma`    | `MacBookAir8,1` |
+| iGPU OpenCL Score     | 3402   | [ID 2896309](https://browser.geekbench.com/v6/compute/2896309) | `macOS Sonoma`    | `MacBookAir8,1` |
+| iGPU Metal Score      | 4598   | [ID 2896295](https://browser.geekbench.com/v6/compute/2896295) | `macOS Sonoma`    | `MacBookAir8,1` |
+
+
 ### Disclaimer:
 
 ⚠️ Highly Recommend you to build the EFI for your device on your own and only use this for reference even though you have the same device as mine since, when something fails you will be on your own.
