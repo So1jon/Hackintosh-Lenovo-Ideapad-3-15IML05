@@ -23,7 +23,8 @@
 | Chipset      | `Intel Comet Point-LP, Intel Comet Lake-U ` | Working     | 
 | Graphics     | `Intel(R) UHD Graphics `                    | Working     | 
 | Audio        | `Realtek ALC 230 `                          | Working     |
-| Ram          | `4/16GB - 2666 Mhz DDR4 Lexar`              | Working     | 
+| Ram          | `4/16GB - 2666 Mhz DDR4 Lexar`              | Working     |
+| Storage      | `CS1030 250GB M.2 NVMe SSD PNY`             | Working     | 
 | WiFi         | `Intel(R) Wireless-AC 9560 `                | Working     | 
 | Bluetooth    | `Intel(R) Wireless Bluetooth(R)  `          | Working     | 
 | Touchpad     | `I2C ELAN0001 [PnP - MSFT0001]  `           | Working     |
