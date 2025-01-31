@@ -37,10 +37,10 @@
 
 | Information           | Result | ID Information                                                 | Operating system  | Model ID        |
 | --------------------- | ------ | -------------------------------------------------------------- | ----------------- | --------------- |
-| CPU Single-Core Score | 1034   | [ID 8181935](https://browser.geekbench.com/v6/cpu/8181935)     | `macOS Sonoma`    | `MacBookAir8,1` |
-| CPU Multi-Core Score  | 2063   | [ID 8181935](https://browser.geekbench.com/v6/cpu/8181935)     | `macOS Sonoma`    | `MacBookAir8,1` |
-| iGPU OpenCL Score     | 3402   | [ID 2896309](https://browser.geekbench.com/v6/compute/2896309) | `macOS Sonoma`    | `MacBookAir8,1` |
-| iGPU Metal Score      | 4598   | [ID 2896295](https://browser.geekbench.com/v6/compute/2896295) | `macOS Sonoma`    | `MacBookAir8,1` |
+| CPU Single-Core Score | 1250   | [ID 10211314](https://browser.geekbench.com/v6/cpu/10211314)   | `macOS Sonoma`    | `MacBookAir8,1` |
+| CPU Multi-Core Score  | 2065   | [ID 10211314](https://browser.geekbench.com/v6/cpu/10211314)   | `macOS Sonoma`    | `MacBookAir8,1` |
+| iGPU OpenCL Score     | 3309   | [ID 3577045](https://browser.geekbench.com/v6/compute/3577045) | `macOS Sonoma`    | `MacBookAir8,1` |
+| iGPU Metal Score      | 4602   | [ID 3577034](https://browser.geekbench.com/v6/compute/3577034) | `macOS Sonoma`    | `MacBookAir8,1` |
 
 
 ### Kext Used:
