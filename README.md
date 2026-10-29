@@ -68,11 +68,11 @@ Intel Core i3-10110U (Comet Lake-U) | Intel UHD 620 | 20 GB RAM | Intel Wireless
 | Date | Step | Result |
 |---|---|---|
 | 2026-10-06 | Sonoma 14 (OpenCore 1.0.1, `MacBookAir8,1`): sleep and ACPI work | Instant wake fixed by the USB map; no ACPI load errors |
-| 2026-10-26 | Tahoe 26.7 installed next to Sonoma (OpenCore 1.0.8, `MacBookPro16,2`, EFI v2) | Audio, Wi-Fi, sleep, trackpad, Fn work; USB and Bluetooth do not |
-| 2026-10-27 | EFI v3 to v10 | USB fixed (v5), Bluetooth fixed (v10) |
-| 2026-10-28 | EFI v11 (`revpatch=sbvmm`), update to 26.7.2 | Update offered and installed; all fixes survived |
+| 2026-10-26 | Tahoe 26.7 installed next to Sonoma (OpenCore 1.0.8, `MacBookPro16,2`) | Audio, Wi-Fi, sleep, trackpad, Fn work; USB and Bluetooth do not |
+| 2026-10-27 | Tahoe-specific fixes for USB and Bluetooth | USB fixed, then Bluetooth fixed |
+| 2026-10-28 | `revpatch=sbvmm`, update to 26.7.2 | Update offered and installed; all fixes survived |
 | 2026-10-28 | Sonoma upgraded in place | Tahoe is now the only system on the drive |
-| 2026-10-29 | CPUFriend profile rebuilt for Tahoe (EFI v12 to v15) | Profile applied (`epp 8`), survives sleep |
+| 2026-10-29 | CPUFriend profile rebuilt for Tahoe | Profile applied (`epp 8`), survives sleep |
 | 2026-10-29 | Sleep tests, Xcode, DRM analysis | This document |
 
 **Conclusions**
@@ -109,7 +109,7 @@ Intel Core i3-10110U (Comet Lake-U) | Intel UHD 620 | 20 GB RAM | Intel Wireless
 
 ### 3.1 Layout
 
-| Item | Sonoma EFI (2026-10-06) | Tahoe EFI v15 (2026-10-29) |
+| Item | Sonoma EFI (2026-10-06) | Tahoe EFI (2026-10-29) |
 |---|---|---|
 | OpenCore | 1.0.1 (REL-101-2024-08-05) | 1.0.8 (REL-108-2026-09-27) |
 | Drivers | OpenRuntime, HfsPlus, OpenCanopy, AudioDxe, NvmExpressDxe, ResetNvramEntry; ToggleSipEntry disabled | Same set |
@@ -203,24 +203,6 @@ Removed during the Sonoma work: `SSDT-RCSM`, `SSDT-ECRW`, `SSDT-YVPC` (no `H_EC`
 
 Serial number, MLB, SmUUID and ROM are present in both configs and are not shown here.
 
-### 3.6 Tahoe EFI versions
-
-| Version | Change | Result |
-|---|---|---|
-| v2 | Base Tahoe EFI (OpenCore 1.0.8, SimpleHDA, AirportItlwm Tahoe build) | Audio, Wi-Fi, sleep, trackpad, Fn work; USB and Bluetooth do not |
-| v3 | xHCI `device-id` `9DED` in DeviceProperties | ❌ OpenCore picker black |
-| v4 | `device-id` from ACPI (`SSDT-XHCID` + `XHC _DSM -> XDSM`) | Picker works, driver loads, ports still dead |
-| v5 | `usb-port-number` next to `port` for all 15 ports | ✅ USB works |
-| v6 | Bluetooth NVRAM keys, IntelBTPatcher, IntelBluetoothFirmware 2.5.0, `-ibtcompatbeta` | ❌ Bluetooth still off |
-| v7, v8 | USB product-name merge for `8087:0AAA`; `-ibtcompatdbg` | Error moved to the HCI stage |
-| v9 | NVRAM per the BlueToolFixup README (both keys), `-btlfxallowanyaddr` | ❌ No change, also after a cold boot |
-| v10 | Vendor-ID rewrite to `0x0A12`, extra firmware personality, name merge removed | ✅ Bluetooth works |
-| v11 | v10 + `revpatch=sbvmm` | ✅ 26.7.2 offered and installed |
-| v12 | v11 + CPUFriend 1.3.0 (Sonoma copy) + CPUFriendDataProvider rebuilt for `MacBookPro16,2` (`epp 8`, `perf-bias 7`) | Kexts load, profile **not** applied (`epp 128`) |
-| v13 | Test marker `ratioratelimit 200000`; provider version written as `1.0.3-test` | ❌ Provider rejected (non-numeric version); after fixing to `1.0.3` it loads but is still not applied |
-| v14 | v13 + boot-arg `-cpufbeta` | ✅ Marker visible (`200000`), `epp 8` |
-| v15 | Official CPUFriend 1.3.0 RELEASE, marker removed, provider 1.0.4 | ✅ `epp 8`, ratelimit back to `100000`; kept after a 12 min lid sleep |
-
 ## 4. ACPI and DSDT
 
 ### 4.1 DSDT
@@ -303,7 +285,7 @@ Serial number, MLB, SmUUID and ROM are present in both configs and are not shown
 | Lid-close sleep, 26.7 | 31 min | 2.94 s | ✅ |
 | Menu sleep, 26.7.2 | 8 min | 2.98 s | ✅ |
 | Lid-close sleep, 26.7.2 | 64 min | 2.99 s | ✅, Bluetooth dropped for ~35 s and recovered (section 7.4) |
-| Lid-close sleep, 26.7.2 + CPUFriend (v15) | 12 min | not measured | ✅, CPUFriend profile kept (`epp 8`); Bluetooth dropped for ~16 s and recovered (section 7.4) |
+| Lid-close sleep, 26.7.2 + CPUFriend | 12 min | not measured | ✅, CPUFriend profile kept (`epp 8`); Bluetooth dropped for ~16 s and recovered (section 7.4) |
 
 Wake reason in every case: `PWRB XDCI USBW/User` (or `.../UserActivity Assertion`), i.e. power button or key press; no spontaneous wake. Power settings: `hibernatemode 0`, `standby 0`, `powernap 0` (`sudo pmset -a hibernatemode 0 standby 0 powernap 0`); the `disksleep` warning that `pmset` prints on battery is harmless.
 
@@ -318,7 +300,7 @@ Wake reason in every case: `PWRB XDCI USBW/User` (or `.../UserActivity Assertion
 | # | Symptom on Tahoe | Root cause | Fix |
 |---|---|---|---|
 | P1 | No USB ports; System Information shows only the controller | Sonoma used the `device-id` spoof `A2AF` (Skylake class). Tahoe removed the legacy Intel xHCI classes (SPT, LPT, PPT, WPT ...); only `AppleIntelCNLUSBXHCI` (`9DED`, `A36D`, `06ED`) and `AppleIntelICLUSBXHCI` remain | `device-id` = `9DED` |
-| P2 | OpenCore picker turns into a black text menu (v3) | `9DED` placed in `DeviceProperties`; the only difference between two otherwise identical EFIs | Give it from ACPI (`SSDT-XHCID`) and keep it out of `DeviceProperties` |
+| P2 | OpenCore picker turns into a black text menu | `9DED` placed in `DeviceProperties`; the only difference between two otherwise identical EFIs | Give it from ACPI (`SSDT-XHCID`) and keep it out of `DeviceProperties` |
 | P3 | Driver loaded, ports still dead | Apple renamed the per-port key `port` to `usb-port-number` (compare `AppleUSBHostPlatformProperties` in Tahoe and Sonoma) | Both keys on all 15 ports |
 
 **SSDT-XHCID.** The original `XHC._DSM` is renamed to `XDSM` and replaced by a `_DSM` that returns the `device-id`:
@@ -388,7 +370,7 @@ Findings from Tahoe's `bluetoothd` binary, compared with the working Sonoma logs
 | Dongle allow-list | Tahoe accepts an external dongle only for vendor `0x0A12` (CSR), `0x0A5C` (Broadcom), `0x0B05:0x190E` (ASUS) and a few MediaTek/Azurewave IDs. Intel `0x8087` is not listed, so it is treated as an internal Broadcom chip and receives Broadcom vendor commands it cannot answer |
 | Name check | A device already named `Bluetooth USB Host Controller` is skipped by the dongle check, so the name merge must **not** be combined with the fix below |
 
-### 7.3 Fix (EFI v10)
+### 7.3 Fix
 
 1. `USBPro.kext`: an extra personality rewrites `idVendor` of `8087:0AAA` to `0x0A12` (CSR):
 
@@ -423,7 +405,7 @@ Findings from Tahoe's `bluetoothd` binary, compared with the working Sonoma logs
 
 Result: `bluetoothd` logs `Found external Bluetooth dongle -- setting chipset to THIRD_PARTY_DONGLE` with vendor `0x0A12`, the controller is `PoweredOn` and finds nearby devices. Pairing and Bluetooth audio were not tested yet.
 
-Attempts that did **not** help on their own: a newer firmware kext alone, the NVRAM keys alone (in v6 `bluetoothInternalControllerInfo` was deleted by mistake; the README of BlueToolFixup requires both keys), IntelBTPatcher with `-ibtcompatbeta`, `-ibtcompatdbg`, a full power-off cold boot, the name merge.
+Attempts that did **not** help on their own: a newer firmware kext alone, the NVRAM keys alone (at first `bluetoothInternalControllerInfo` was deleted by mistake; the README of BlueToolFixup requires both keys), IntelBTPatcher with `-ibtcompatbeta`, `-ibtcompatdbg`, a full power-off cold boot, the name merge.
 
 ### 7.4 After sleep
 
@@ -503,8 +485,8 @@ In `config.plist` (Kernel > Add) both kexts come right after `NVMeFix` (after `L
 
 | # | Symptom | Cause | Fix |
 |---|---|---|---|
-| C1 | `kmutil showloaded` lists CPUFriend, `cf-frequency-data` is on all four CPU nodes in `ioreg`, but the plugin still reports Apple's profile (`epp 128`, `ratio_change_ratelimit_ns` unchanged) | The Sonoma-era copy (labelled 1.3.0, Xcode 14.2 build, file dated 2025-01-21) did not apply the data on Tahoe without help | Boot-arg `-cpufbeta` (v14). The official 1.3.0 build (below) was only tested with this flag |
-| C2 | No `cf-frequency-data` and no `CPUFriendDataProvider` in `ioreg` at all (v13) | I had written the provider version as `1.0.3-test`; kext versions must be numeric | `1.0.3`, later `1.0.4` |
+| C1 | `kmutil showloaded` lists CPUFriend, `cf-frequency-data` is on all four CPU nodes in `ioreg`, but the plugin still reports Apple's profile (`epp 128`, `ratio_change_ratelimit_ns` unchanged) | The Sonoma-era copy (labelled 1.3.0, Xcode 14.2 build, file dated 2025-01-21) did not apply the data on Tahoe without help | Boot-arg `-cpufbeta`. The official 1.3.0 build (below) was only tested with this flag |
+| C2 | No `cf-frequency-data` and no `CPUFriendDataProvider` in `ioreg` at all | I had written the provider version as `1.0.3-test`; kext versions must be numeric | `1.0.3`, later `1.0.4` |
 | C3 | Everything looks fine in `ioreg` but nothing changed | The data being present on the CPU nodes does **not** prove the plugin uses it | Check the plugin's live vector, or use a marker value (9.5) |
 
 ### 9.5 How it was verified
@@ -525,17 +507,17 @@ ioreg -rc X86PlatformPlugin -l -w0 | grep -m1 IOPlatformPowerProfile
 
 (Decode the `FrequencyVectors` hex and read `epp` / `perf-bias` at the offsets above.)
 
-| EFI | CPUFriend | Boot-arg | Provider in `ioreg` | `ratio_change_ratelimit_ns` | Live `epp` | Result |
+| Test | CPUFriend | Boot-arg | Provider in `ioreg` | `ratio_change_ratelimit_ns` | Live `epp` | Result |
 |---|---|---|---|---|---|---|
-| v12 | Sonoma copy | - | yes (`epp 8` data) | 100000 | 128 | Not applied |
-| v13 (first boot) | Sonoma copy | - | **no** | 100000 | - | Provider rejected (version string) |
-| v13 (fixed) | Sonoma copy | - | yes (marker 200000) | 100000 | 128 | Not applied |
-| v14 | Sonoma copy | `-cpufbeta` | yes | **200000** | **8** | Applied |
-| v15 | Official 1.3.0 RELEASE | `-cpufbeta` | yes | 100000 (marker removed, as designed) | **8** | Applied |
+| 1 | Sonoma copy | - | yes (`epp 8` data) | 100000 | 128 | Not applied |
+| 2 | Sonoma copy | - | **no** | 100000 | - | Provider rejected (version string) |
+| 3 | Sonoma copy | - | yes (marker 200000) | 100000 | 128 | Not applied |
+| 4 | Sonoma copy | `-cpufbeta` | yes | **200000** | **8** | Applied |
+| 5 | Official 1.3.0 RELEASE | `-cpufbeta` | yes | 100000 (marker removed, as designed) | **8** | Applied |
 
 After a 12 min lid sleep the live vector still had `epp 8` and `perf-bias 7`; USB, Bluetooth, Wi-Fi and the power settings (`hibernatemode 0`, `standby 0`, `powernap 0`) were unchanged.
 
-### 9.6 The official release used in v15
+### 9.6 The official release used in the final EFI
 
 | Item | Value |
 |---|---|
@@ -561,7 +543,7 @@ On Tahoe, `softwareupdate -l` and System Settings offered nothing although 26.7.
 
 | Item | Detail |
 |---|---|
-| Fix (EFI v11) | `RestrictEvents.kext` (already loaded) + boot-arg `revpatch=sbvmm`; nothing else changed from v10 |
+| Fix | `RestrictEvents.kext` (already loaded) + boot-arg `revpatch=sbvmm` |
 | Result | 26.7.2 (25G332, 1.37 GB) appeared and installed in about 20 minutes; `kern.hv_vmm_present` stays `0` |
 | After the update | OpenCore, boot-args and Bluetooth NVRAM kept; 28 third-party kexts loaded; USB, Bluetooth (`THIRD_PARTY_DONGLE`), Wi-Fi, audio and graphics all checked |
 | Space | About 1.4 GB download; 30 GB free was more than enough |
@@ -641,16 +623,16 @@ Tahoe benchmarks have not been run yet.
 | 2026-10-06 | Sonoma | `SSDT-USBX` instead of `SSDT-EC-USBX` | applied, worked |
 | 2026-10-06 | Sonoma | HPET Base patch (broke the trackpad) | reverted |
 | 2026-10-06 | Sonoma | Original `TPD0 _CRS` patch restored; `SSDT-HPET` and `SSDT-RTC` removed | **applied, trackpad recovered** |
-| 2026-10-26 | Tahoe | Tahoe EFI v2: OpenCore 1.0.8, `MacBookPro16,2`, SimpleHDA, AirportItlwm Tahoe build | applied |
-| 2026-10-27 | Tahoe | xHCI `9DED` via `SSDT-XHCID` + `XHC _DSM -> XDSM` (v4); `usb-port-number` (v5) | **USB works** |
-| 2026-10-27 | Tahoe | Intel Bluetooth vendor-ID rewrite to `0x0A12`, NVRAM keys, IntelBTPatcher (v10) | **Bluetooth works** |
-| 2026-10-28 | Tahoe | `revpatch=sbvmm` (v11); update to 26.7.2 | **applied, update installed** |
+| 2026-10-26 | Tahoe | Tahoe EFI: OpenCore 1.0.8, `MacBookPro16,2`, SimpleHDA, AirportItlwm Tahoe build | applied |
+| 2026-10-27 | Tahoe | xHCI `9DED` via `SSDT-XHCID` + `XHC _DSM -> XDSM`; `usb-port-number` | **USB works** |
+| 2026-10-27 | Tahoe | Intel Bluetooth vendor-ID rewrite to `0x0A12`, NVRAM keys, IntelBTPatcher | **Bluetooth works** |
+| 2026-10-28 | Tahoe | `revpatch=sbvmm`; update to 26.7.2 | **applied, update installed** |
 | 2026-10-28 | Tahoe | `hibernatemode 0`, `standby 0`, `powernap 0` | applied |
-| 2026-10-29 | Tahoe | CPUFriend profile rebuilt for `MacBookPro16,2` (`epp 8`, `perf-bias 7`), marker test, `-cpufbeta` (v12 to v14) | applied |
-| 2026-10-29 | Tahoe | Official CPUFriend 1.3.0 RELEASE installed, marker removed (v15) | **applied, profile active** |
+| 2026-10-29 | Tahoe | CPUFriend profile rebuilt for `MacBookPro16,2` (`epp 8`, `perf-bias 7`), marker test, `-cpufbeta` | applied |
+| 2026-10-29 | Tahoe | Official CPUFriend 1.3.0 RELEASE installed, marker removed | **applied, profile active** |
 | 2026-10-29 | Tahoe | Sleep tests up to 64 min, Xcode 26.6 setup, DRM limitation documented | documented |
 
-Sonoma backups were kept on the EFI partition (`config-backup-20261006-0043`, `-bt-test-0106`, `-before-usbmap-0112`, `-before-nprw-off-0141`, `USBPro Info.plist.bak-20261006-0112`); every Tahoe EFI version (v2 to v15) was kept as a separate folder.
+Sonoma backups were kept on the EFI partition (`config-backup-20261006-0043`, `-bt-test-0106`, `-before-usbmap-0112`, `-before-nprw-off-0141`, `USBPro Info.plist.bak-20261006-0112`).
 
 ---
 
